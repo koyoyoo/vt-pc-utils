@@ -18,15 +18,16 @@ export default defineConfig({
     },
   },
   esbuild: {
-    // ESBuild只支持有限的TypeScript编译选项
+    // 在开发环境中启用严格的TypeScript检查
     tsconfigRaw: {
       compilerOptions: {
-        // 基础严格模式选项
         strict: true,
-        // 类字段定义行为
-        useDefineForClassFields: true,
-        // 模块语法处理
-        verbatimModuleSyntax: true
+        alwaysStrict: true,
+        exactOptionalPropertyTypes: true,
+        noImplicitReturns: true,
+        noImplicitOverride: true,
+        noPropertyAccessFromIndexSignature: true,
+        noUncheckedIndexedAccess: true
       }
     }
   }

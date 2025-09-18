@@ -1,12 +1,7 @@
 <template>
   <Teleport to="body">
     <Transition name="toast" appear>
-      <div 
-        v-if="visible" 
-        class="toast" 
-        :class="`toast-${type}`"
-        @click="close"
-      >
+      <div v-if="visible" class="toast" :class="`toast-${type}`" @click="close">
         <div class="toast-content">
           <span class="toast-icon">{{ getIcon() }}</span>
           <span class="toast-message">{{ message }}</span>
@@ -18,60 +13,60 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted } from "vue";
 
 // 定义组件属性
 interface Props {
-  message: string
-  type?: 'success' | 'error' | 'info' | 'warning'
-  duration?: number
-  closable?: boolean
+  message: string;
+  type?: "success" | "error" | "info" | "warning";
+  duration?: number;
+  closable?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  type: 'success',
+  type: "success",
   duration: 3000,
-  closable: true
-})
+  closable: true,
+});
 
 // 定义事件
 const emit = defineEmits<{
-  close: []
-}>()
+  close: [];
+}>();
 
 // 响应式数据
-const visible = ref(true)
-let timer: ReturnType<typeof setTimeout> | null = null
+const visible = ref(true);
+let timer: number | null = null;
 
 // 获取图标
 const getIcon = (): string => {
   const icons = {
-    success: '✅',
-    error: '❌',
-    info: 'ℹ️',
-    warning: '⚠️'
-  }
-  return icons[props.type]
-}
+    success: "✅",
+    error: "❌",
+    info: "ℹ️",
+    warning: "⚠️",
+  };
+  return icons[props.type];
+};
 
 // 关闭提示
 const close = () => {
-  visible.value = false
+  visible.value = false;
   if (timer) {
-    clearTimeout(timer)
-    timer = null
+    clearTimeout(timer);
+    timer = null;
   }
-  emit('close')
-}
+  emit("close");
+};
 
 // 组件挂载时设置自动关闭
 onMounted(() => {
   if (props.duration > 0) {
     timer = setTimeout(() => {
-      close()
-    }, props.duration)
+      close();
+    }, props.duration);
   }
-})
+});
 </script>
 
 <style lang="scss" scoped>
@@ -85,22 +80,22 @@ onMounted(() => {
   border-radius: var(--border-radius-md);
   box-shadow: var(--shadow-heavy);
   cursor: pointer;
-  
+
   &.toast-success {
     background: var(--success-gradient);
     color: var(--text-white);
   }
-  
+
   &.toast-error {
     background: var(--error-gradient);
     color: var(--text-white);
   }
-  
+
   &.toast-info {
     background: var(--primary-gradient);
     color: var(--text-white);
   }
-  
+
   &.toast-warning {
     background: var(--warning-gradient);
     color: var(--text-primary);
@@ -140,7 +135,7 @@ onMounted(() => {
   border-radius: 50%;
   transition: all var(--transition-fast);
   flex-shrink: 0;
-  
+
   &:hover {
     background: rgba(255, 255, 255, 0.2);
   }
