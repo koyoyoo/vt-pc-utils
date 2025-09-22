@@ -39,6 +39,12 @@ const tools = ref([
     icon: "🗜️",
     description: "JSON数据压缩和格式化",
   },
+  {
+    name: "图片圆形裁剪",
+    path: "/image-clipper",
+    icon: "🖼️",
+    description: "图片圆形裁剪工具",
+  },
 ]);
 </script>
 

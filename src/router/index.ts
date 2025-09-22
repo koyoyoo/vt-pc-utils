@@ -5,6 +5,7 @@ import type { RouteRecordRaw } from "vue-router";
 const Home = () => import("@/views/Home.vue");
 const Excel2Json = () => import("@/views/Excel2Json.vue");
 const JsonCompressor = () => import("@/views/JsonCompressor.vue");
+const ImageClipper = () => import("@/views/ImageClipper.vue");
 
 // 路由配置
 const routes: RouteRecordRaw[] = [
@@ -30,6 +31,14 @@ const routes: RouteRecordRaw[] = [
     component: JsonCompressor,
     meta: {
       title: "JSON压缩工具",
+    },
+  },
+  {
+    path: "/image-clipper",
+    name: "ImageClipper",
+    component: ImageClipper,
+    meta: {
+      title: "图片圆形裁剪工具",
     },
   },
   {

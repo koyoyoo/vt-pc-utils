@@ -22,6 +22,15 @@
             高性能JSON格式化、压缩和美化工具，支持大文件处理和格式验证
           </p>
         </router-link>
+
+        <!-- 图片圆形裁剪工具 -->
+        <router-link to="/image-clipper" class="tool-card image">
+          <span class="tool-icon">🖼️</span>
+          <h3 class="tool-title">图片圆形裁剪</h3>
+          <p class="tool-description">
+            简单易用的图片圆形裁剪工具，支持上传图片、裁剪和下载
+          </p>
+        </router-link>
       </div>
 
       <div class="footer">
@@ -53,7 +62,6 @@ import CpnFooter from "../components/CpnFooter.vue";
   border-radius: 20px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
   padding: 40px;
-  max-width: 800px;
   width: 100%;
   text-align: center;
 }
@@ -73,7 +81,7 @@ import CpnFooter from "../components/CpnFooter.vue";
 
 .tools-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); // 固定一行显示2条数据
+  grid-template-columns: repeat(3, 1fr); // 固定一行显示2条数据
   gap: 30px;
   margin-top: 30px;
 }
