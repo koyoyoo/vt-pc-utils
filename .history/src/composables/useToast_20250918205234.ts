@@ -1,4 +1,4 @@
-import { createApp, type App } from 'vue'
+import { ref, createApp, App } from 'vue'
 import CpnToast from '../components/CpnToast.vue'
 
 // Toast消息类型

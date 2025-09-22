@@ -122,10 +122,8 @@ export async function handleFileDrop(
   const files = event.dataTransfer?.files;
   if (files && files.length > 0) {
     const file = files[0];
-    if (file) {
-      const result = await readFileContent(file, options);
-      callback(result);
-    }
+    const result = await readFileContent(file, options);
+    callback(result);
   }
 }
 

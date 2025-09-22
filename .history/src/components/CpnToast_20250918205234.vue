@@ -41,7 +41,7 @@ const emit = defineEmits<{
 
 // 响应式数据
 const visible = ref(true)
-let timer: ReturnType<typeof setTimeout> | null = null
+let timer: NodeJS.Timeout | null = null
 
 // 获取图标
 const getIcon = (): string => {
