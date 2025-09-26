@@ -1,4 +1,4 @@
-import * as XLSX from 'xlsx';
+import * as XLSX from "xlsx";
 
 /**
  * Excel转换选项接口
@@ -15,10 +15,13 @@ export interface ExcelConvertOptions {
  * @param options - 转换选项
  * @returns Promise<any> - 转换后的JSON数据
  */
-export const processExcelFile = async (file: File, options: ExcelConvertOptions): Promise<any> => {
+export const processExcelFile = async (
+  file: File,
+  options: ExcelConvertOptions
+): Promise<any> => {
   try {
     const arrayBuffer = await file.arrayBuffer();
-    const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+    const workbook = XLSX.read(arrayBuffer, { type: "array" });
 
     let result: any;
 
@@ -38,8 +41,8 @@ export const processExcelFile = async (file: File, options: ExcelConvertOptions)
 
     return result;
   } catch (error) {
-    console.error('Excel文件处理错误:', error);
-    throw new Error('文件处理失败，请检查文件格式是否正确');
+    console.error("Excel文件处理错误:", error);
+    throw new Error("文件处理失败，请检查文件格式是否正确");
   }
 };
 
@@ -49,7 +52,10 @@ export const processExcelFile = async (file: File, options: ExcelConvertOptions)
  * @param options - 转换选项
  * @returns any[] - 转换后的数据数组
  */
-export const convertSheetToColumnFormat = (worksheet: any, options: ExcelConvertOptions): any[] => {
+export const convertSheetToColumnFormat = (
+  worksheet: any,
+  options: ExcelConvertOptions
+): any[] => {
   // 使用header: 1参数获取原始数组格式数据
   const jsonResult = XLSX.utils.sheet_to_json(worksheet, {
     header: 1,
@@ -65,33 +71,36 @@ export const convertSheetToColumnFormat = (worksheet: any, options: ExcelConvert
   // 从第二行开始处理数据
   jsonResult.slice(1).forEach((row: unknown, index: number) => {
     const rowData = row as any[]; // 类型断言
-    const obj: any = { 'column-0': index + 1 }; // 添加序号列
+    const obj: any = { "column-0": index + 1 }; // 添加序号列
 
     columns.forEach((_col: any, i: number) => {
       let cellValue = rowData[i];
 
       // 去除换行符处理
-      if (options.removeLineBreaks && typeof cellValue === 'string') {
-        cellValue = cellValue.replace(/[\n\r]/g, '');
+      if (options.removeLineBreaks && typeof cellValue === "string") {
+        cellValue = cellValue.replace(/[\n\r]/g, "");
       }
 
       // 日期格式转换处理
       if (options.convertDates && /^\d{1,2}\/\d{1,2}\/\d{2}$/.test(cellValue)) {
-        const dateParts = cellValue.split('/');
+        const dateParts = cellValue.split("/");
         const year = parseInt(dateParts[2]);
         const fullYear = year < 50 ? 2000 + year : 1900 + year;
-        obj['column-' + (i + 1)] = `${fullYear}年${dateParts[0]}月${dateParts[1]}日`;
+        obj[
+          "column-" + (i + 1)
+        ] = `${fullYear}年${dateParts[0]}月${dateParts[1]}日`;
       } else {
-        obj['column-' + (i + 1)] = cellValue;
+        obj["column-" + (i + 1)] = cellValue;
       }
     });
 
     // 处理合并逻辑（与HTML版本保持一致）
-    if (obj['column-1'] === undefined) {
+    if (obj["column-1"] === undefined) {
       // 如果column-1是undefined，将column-3与前一条记录合并
-      if (obj['column-3'] !== undefined && obj['column-3'] !== 'undefined') {
-        prevObj['column-3'] =
-          (prevObj['column-3'] ? prevObj['column-3'] + ', ' : '') + obj['column-3'];
+      if (obj["column-3"] !== undefined && obj["column-3"] !== "undefined") {
+        prevObj["column-3"] =
+          (prevObj["column-3"] ? prevObj["column-3"] + ", " : "") +
+          obj["column-3"];
       }
     } else {
       // 如果column-1不是undefined，添加到结果中
@@ -104,7 +113,7 @@ export const convertSheetToColumnFormat = (worksheet: any, options: ExcelConvert
   jsonData.push(prevObj);
 
   // 移除第一个空对象（如果存在）
-  if (jsonData[0] && jsonData[0]['column-1'] === undefined) {
+  if (jsonData[0] && jsonData[0]["column-1"] === undefined) {
     jsonData.shift();
   }
 
@@ -118,9 +127,9 @@ export const convertSheetToColumnFormat = (worksheet: any, options: ExcelConvert
  */
 export const downloadJsonFile = (jsonData: any, filename?: string): void => {
   const jsonString = JSON.stringify(jsonData, null, 2);
-  const blob = new Blob([jsonString], { type: 'application/json' });
+  const blob = new Blob([jsonString], { type: "application/json" });
   const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
+  const link = document.createElement("a");
 
   link.href = url;
   link.download = filename || `excel_data_${new Date().getTime()}.json`;

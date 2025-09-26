@@ -144,7 +144,7 @@ const handleDrop = (event: DragEvent) => {
   const files = event.dataTransfer?.files;
   if (files && files.length > 0) {
     const file = files[0];
-    if (isExcelFile(file)) {
+    if (file && isExcelFile(file)) {
       processFile(file);
     } else {
       alert("请选择Excel文件（.xls或.xlsx格式）");

@@ -32,7 +32,12 @@
             <div class="clipped-preview">
               <h3>圆形裁剪预览</h3>
               <div class="image-wrapper">
-                <img v-if="clippedImage" :src="clippedImage" alt="裁剪后的图片" class="circle-image" />
+                <img
+                  v-if="clippedImage"
+                  :src="clippedImage"
+                  alt="裁剪后的图片"
+                  class="circle-image"
+                />
                 <div v-else class="loading-placeholder">
                   <div class="loading-spinner"></div>
                   <p>正在处理图片...</p>
@@ -45,13 +50,15 @@
           <div class="quality-control">
             <h4>图片质量设置</h4>
             <div class="quality-slider">
-              <label for="quality">质量：{{ Math.round(quality * 100) }}%</label>
-              <input 
+              <label for="quality"
+                >质量：{{ Math.round(quality * 100) }}%</label
+              >
+              <input
                 id="quality"
-                type="range" 
-                min="0.1" 
-                max="1" 
-                step="0.1" 
+                type="range"
+                min="0.1"
+                max="1"
+                step="0.1"
                 v-model="quality"
                 @input="processImage"
               />
@@ -60,24 +67,21 @@
 
           <!-- 操作按钮 -->
           <div class="result-actions">
-            <button 
-              class="btn btn-primary" 
+            <button
+              class="btn btn-primary"
               @click="processImage"
               :disabled="isProcessing"
             >
-              {{ isProcessing ? '处理中...' : '🔄 重新裁剪' }}
+              {{ isProcessing ? "处理中..." : "🔄 重新裁剪" }}
             </button>
-            <button 
-              class="btn btn-download" 
+            <button
+              class="btn btn-download"
               @click="downloadImage"
               :disabled="!clippedImage"
             >
               📥 下载圆形图片
             </button>
-            <button 
-              class="btn btn-reset" 
-              @click="resetAll"
-            >
+            <button class="btn btn-reset" @click="resetAll">
               🔄 重新选择图片
             </button>
           </div>
@@ -85,20 +89,20 @@
 
         <!-- 文件上传区 -->
         <div v-if="!originalImage && !isProcessing" class="upload-section">
-          <div 
-            class="upload-area" 
+          <div
+            class="upload-area"
             :class="{ 'drag-over': isDragOver }"
             @drop="handleDrop"
             @dragover.prevent="handleDragOver"
             @dragleave="handleDragLeave"
             @click="triggerFileInput"
           >
-            <input 
+            <input
               ref="fileInput"
-              type="file" 
-              accept="image/*" 
+              type="file"
+              accept="image/*"
               @change="handleFileSelect"
-              style="display: none;"
+              style="display: none"
             />
             <div class="upload-content">
               <span class="upload-icon">🖼️</span>
@@ -117,129 +121,129 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import CpnPageHeader from "../components/CpnPageHeader.vue"
-import CpnNavigation from "../components/CpnNavigation.vue"
-import CpnFooter from "../components/CpnFooter.vue"
-import { clipImageToCircle } from '@/utils/canvas/clipImage'
+import { ref, onMounted } from "vue";
+import CpnPageHeader from "../components/CpnPageHeader.vue";
+import CpnNavigation from "../components/CpnNavigation.vue";
+import CpnFooter from "../components/CpnFooter.vue";
+import { clipImageToCircle } from "@/utils/canvas/clipImage";
 
 // 响应式数据
-const fileInput = ref<HTMLInputElement | null>(null)
-const originalImage = ref<string>('')
-const clippedImage = ref<string>('')
-const isDragOver = ref<boolean>(false)
-const isProcessing = ref<boolean>(false)
-const quality = ref<number>(0.8)
+const fileInput = ref<HTMLInputElement | null>(null);
+const originalImage = ref<string>("");
+const clippedImage = ref<string>("");
+const isDragOver = ref<boolean>(false);
+const isProcessing = ref<boolean>(false);
+const quality = ref<number>(0.8);
 
 // 触发文件选择
 const triggerFileInput = (): void => {
-  fileInput.value?.click()
-}
+  fileInput.value?.click();
+};
 
 // 处理文件选择
 const handleFileSelect = (event: Event): void => {
-  const target = event.target as HTMLInputElement
-  const file = target.files?.[0]
+  const target = event.target as HTMLInputElement;
+  const file = target.files?.[0];
   if (file) {
-    handleFile(file)
+    handleFile(file);
   }
-}
+};
 
 // 处理拖拽上传
 const handleDrop = (event: DragEvent): void => {
-  event.preventDefault()
-  isDragOver.value = false
-  
-  const files = event.dataTransfer?.files
-  if (files && files.length > 0) {
-    handleFile(files[0])
+  event.preventDefault();
+  isDragOver.value = false;
+
+  const files = event.dataTransfer?.files;
+  if (files && files?.length > 0 && files[0]) {
+    handleFile(files[0]);
   }
-}
+};
 
 // 处理拖拽悬停
 const handleDragOver = (event: DragEvent): void => {
-  event.preventDefault()
-  isDragOver.value = true
-}
+  event.preventDefault();
+  isDragOver.value = true;
+};
 
 // 处理拖拽离开
 const handleDragLeave = (): void => {
-  isDragOver.value = false
-}
+  isDragOver.value = false;
+};
 
 // 处理文件
 const handleFile = (file: File): void => {
   // 验证文件类型
-  if (!file.type.startsWith('image/')) {
-    alert('请选择图片文件！')
-    return
+  if (!file.type.startsWith("image/")) {
+    alert("请选择图片文件！");
+    return;
   }
 
   // 验证文件大小（限制为10MB）
   if (file.size > 10 * 1024 * 1024) {
-    alert('图片文件大小不能超过10MB！')
-    return
+    alert("图片文件大小不能超过10MB！");
+    return;
   }
 
   // 读取文件并显示预览
-  const reader = new FileReader()
+  const reader = new FileReader();
   reader.onload = (e: ProgressEvent<FileReader>): void => {
     if (e.target?.result) {
-      originalImage.value = e.target.result as string
-      processImage()
+      originalImage.value = e.target.result as string;
+      processImage();
     }
-  }
-  reader.readAsDataURL(file)
-}
+  };
+  reader.readAsDataURL(file);
+};
 
 // 处理图片裁剪
 const processImage = async (): Promise<void> => {
-  if (!originalImage.value) return
+  if (!originalImage.value) return;
 
-  isProcessing.value = true
-  clippedImage.value = ''
+  isProcessing.value = true;
+  clippedImage.value = "";
 
   try {
     // 使用工具函数进行圆形裁剪
-    const result = await clipImageToCircle(originalImage.value, quality.value)
-    clippedImage.value = result
+    const result = await clipImageToCircle(originalImage.value, quality.value);
+    clippedImage.value = result;
   } catch (error) {
-    console.error('图片处理失败:', error)
-    alert('图片处理失败，请重试！')
+    console.error("图片处理失败:", error);
+    alert("图片处理失败，请重试！");
   } finally {
-    isProcessing.value = false
+    isProcessing.value = false;
   }
-}
+};
 
 // 下载图片
 const downloadImage = (): void => {
-  if (!clippedImage.value) return
+  if (!clippedImage.value) return;
 
   // 创建下载链接
-  const link = document.createElement('a')
-  link.href = clippedImage.value
-  link.download = `circle-image-${Date.now()}.png`
-  document.body.appendChild(link)
-  link.click()
-  document.body.removeChild(link)
-}
+  const link = document.createElement("a");
+  link.href = clippedImage.value;
+  link.download = `circle-image-${Date.now()}.png`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
 
 // 重置所有状态
 const resetAll = (): void => {
-  originalImage.value = ''
-  clippedImage.value = ''
-  isProcessing.value = false
-  quality.value = 0.8
+  originalImage.value = "";
+  clippedImage.value = "";
+  isProcessing.value = false;
+  quality.value = 0.8;
   if (fileInput.value) {
-    fileInput.value.value = ''
+    fileInput.value.value = "";
   }
-}
+};
 
 // 页面加载完成后的初始化
 onMounted((): void => {
   // 设置页面标题
-  document.title = "图片圆形裁剪工具 - koyoyoo工具集"
-})
+  document.title = "图片圆形裁剪工具 - koyoyoo工具集";
+});
 </script>
 
 <style lang="scss" scoped>
@@ -307,7 +311,8 @@ onMounted((): void => {
     gap: 20px;
   }
 
-  .original-preview, .clipped-preview {
+  .original-preview,
+  .clipped-preview {
     h3 {
       font-size: 16px;
       color: #333;
@@ -465,14 +470,22 @@ onMounted((): void => {
 
   &:hover {
     border-color: #667eea;
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+    background: linear-gradient(
+      135deg,
+      rgba(102, 126, 234, 0.05) 0%,
+      rgba(118, 75, 162, 0.05) 100%
+    );
     transform: translateY(-2px);
     box-shadow: 0 7px 20px rgba(102, 126, 234, 0.15);
   }
 
   &.drag-over {
     border-color: #667eea;
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+    background: linear-gradient(
+      135deg,
+      rgba(102, 126, 234, 0.1) 0%,
+      rgba(118, 75, 162, 0.1) 100%
+    );
     transform: scale(1.02);
     box-shadow: 0 10px 25px rgba(102, 126, 234, 0.2);
   }
@@ -563,7 +576,8 @@ onMounted((): void => {
   }
 
   .image-container {
-    .original-preview, .clipped-preview {
+    .original-preview,
+    .clipped-preview {
       h3 {
         font-size: 14px;
       }
