@@ -39,6 +39,9 @@ export default defineConfig({
       "@": path.resolve(__dirname, "src"),
     },
   },
+  optimizeDeps: {
+    include: ['crypto-js']
+  },
   esbuild: {
     // 在开发模式下禁用 ESBuild 的 TypeScript 处理，让 vue-tsc 处理
     // 移除 tsconfigRaw 配置，让 esbuild 使用默认的 TypeScript 配置

@@ -6,6 +6,7 @@ const Home = () => import("@/views/Home.vue");
 const Excel2Json = () => import("@/views/Excel2Json.vue");
 const JsonCompressor = () => import("@/views/JsonCompressor.vue");
 const ImageClipper = () => import("@/views/ImageClipper.vue");
+const AesCrypto = () => import("@/views/AesCrypto.vue");
 
 // 路由配置
 const routes: RouteRecordRaw[] = [
@@ -39,6 +40,14 @@ const routes: RouteRecordRaw[] = [
     component: ImageClipper,
     meta: {
       title: "图片圆形裁剪工具",
+    },
+  },
+  {
+    path: "/aes-crypto",
+    name: "AesCrypto",
+    component: AesCrypto,
+    meta: {
+      title: "AES加密解密工具",
     },
   },
   {

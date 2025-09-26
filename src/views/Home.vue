@@ -31,6 +31,15 @@
             简单易用的图片圆形裁剪工具，支持上传图片、裁剪和下载
           </p>
         </router-link>
+
+        <!-- AES加密解密工具 -->
+        <router-link to="/aes-crypto" class="tool-card crypto">
+          <span class="tool-icon">🔐</span>
+          <h3 class="tool-title">AES加密解密</h3>
+          <p class="tool-description">
+            强大的AES加密解密工具，支持多种加密模式和填充方式，保护您的数据安全
+          </p>
+        </router-link>
       </div>
 
       <div class="footer">
@@ -81,7 +90,7 @@ import CpnFooter from "../components/CpnFooter.vue";
 
 .tools-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr); // 固定一行显示2条数据
+  grid-template-columns: repeat(2, 1fr); // 修改为一行显示2条数据
   gap: 30px;
   margin-top: 30px;
 }
@@ -108,6 +117,14 @@ import CpnFooter from "../components/CpnFooter.vue";
 
   &.json {
     background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+  }
+
+  &.image {
+    background: linear-gradient(135deg, #d299c2 0%, #fef9d7 100%);
+  }
+
+  &.crypto {
+    background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);
   }
 }
 

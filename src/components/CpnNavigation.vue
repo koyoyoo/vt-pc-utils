@@ -45,6 +45,12 @@ const tools = ref([
     icon: "🖼️",
     description: "图片圆形裁剪工具",
   },
+  {
+    name: "AES加密解密",
+    path: "/aes-crypto",
+    icon: "🔐",
+    description: "AES算法加密解密工具",
+  },
 ]);
 </script>
 
