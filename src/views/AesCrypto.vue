@@ -1,140 +1,174 @@
 <template>
   <div class="aes-crypto-container">
-    <!-- 页面头部 -->
-    <CpnPageHeader
-      title="AES 加密解密工具"
-      description="使用 AES 算法对文本进行加密和解密操作"
-    />
+    <!-- 导航栏 -->
+    <CpnNavigation />
+    <div class="main-content">
+      <div class="container">
+        <!-- 页面头部 -->
+        <CpnPageHeader
+          title="AES 加密解密工具"
+          subtitle="使用 AES 算法对文本进行加密和解密操作"
+        />
 
-    <div class="crypto-content">
-      <!-- 密钥输入区域 -->
-      <div class="key-section">
-        <el-card class="key-card">
-          <template #header>
-            <div class="card-header">
-              <span>密钥设置2</span>
-            </div>
-          </template>
-          <div class="key-input-group">
-            <el-input
-              v-model="secretKey"
-              placeholder="请输入密钥（建议16位以上）"
-              show-password
-              clearable
-              class="key-input"
-            >
-              <template #prepend>密钥</template>
-            </el-input>
-            <el-button type="primary" @click="generateRandomKey"
-              >生成随机密钥</el-button
-            >
+        <div class="crypto-content">
+          <!-- 密钥和配置设置区域 -->
+          <div class="config-section">
+            <el-card class="config-card">
+              <template #header>
+                <div class="card-header">
+                  <el-icon><Setting /></el-icon>
+                  <span>密钥与配置</span>
+                </div>
+              </template>
+
+              <el-form
+                :model="configForm"
+                label-width="70px"
+                label-position="left"
+              >
+                <el-row :gutter="20">
+                  <el-col :span="9">
+                    <el-form-item label="密钥">
+                      <div class="key-input-group">
+                        <el-input
+                          v-model="secretKey"
+                          placeholder="请输入密钥"
+                          show-password
+                          clearable
+                          class="key-input"
+                        >
+                          <template #append>
+                            <el-button
+                              type="primary"
+                              @click="generateRandomKey"
+                            >
+                              生成随机密钥
+                            </el-button>
+                          </template>
+                        </el-input>
+                      </div>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="5">
+                    <el-form-item label="加密模式">
+                      <el-select
+                        v-model="encryptionMode"
+                        placeholder="选择加密模式"
+                        class="full-width"
+                      >
+                        <el-option label="ECB - 电子密码本" value="ECB" />
+                        <el-option label="CBC - 密码块链接" value="CBC" />
+                        <el-option label="CFB - 密码反馈" value="CFB" />
+                        <el-option label="OFB - 输出反馈" value="OFB" />
+                      </el-select>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="4">
+                    <el-form-item label="填充模式">
+                      <el-select
+                        v-model="paddingMode"
+                        placeholder="选择填充模式"
+                        class="full-width"
+                      >
+                        <el-option label="Pkcs7" value="Pkcs7" />
+                        <el-option label="AnsiX923" value="AnsiX923" />
+                        <el-option label="Iso10126" value="Iso10126" />
+                        <el-option label="ZeroPadding" value="ZeroPadding" />
+                      </el-select>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="5">
+                    <el-form-item label="输出格式">
+                      <el-select
+                        v-model="outputFormat"
+                        placeholder="选择输出格式"
+                        class="full-width"
+                      >
+                        <el-option label="Base64编码" value="Base64" />
+                        <el-option label="Hex编码" value="Hex" />
+                      </el-select>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+              </el-form>
+            </el-card>
           </div>
-        </el-card>
-      </div>
-      <!-- 高级选项 -->
-      <div class="advanced-section">
-        <el-card class="advanced-card">
-          <div class="advanced-options">
-            <div class="option-group">
-              <label>加密模式：</label>
-              <el-select v-model="encryptionMode" placeholder="选择加密模式">
-                <el-option label="ECB" value="ECB" />
-                <el-option label="CBC" value="CBC" />
-                <el-option label="CFB" value="CFB" />
-                <el-option label="OFB" value="OFB" />
-              </el-select>
-            </div>
-            <div class="option-group">
-              <label>填充模式：</label>
-              <el-select v-model="paddingMode" placeholder="选择填充模式">
-                <el-option label="Pkcs7" value="Pkcs7" />
-                <el-option label="AnsiX923" value="AnsiX923" />
-                <el-option label="Iso10126" value="Iso10126" />
-                <el-option label="ZeroPadding" value="ZeroPadding" />
-              </el-select>
-            </div>
-            <div class="option-group">
-              <label>输出格式：</label>
-              <el-select v-model="outputFormat" placeholder="选择输出格式">
-                <el-option label="Base64" value="Base64" />
-                <el-option label="Hex" value="Hex" />
-              </el-select>
-            </div>
+        </div>
+
+        <!-- 加密解密操作区域 -->
+        <div class="operation-section">
+          <div class="operation-left">
+            <el-card class="operation-card">
+              <template #header>
+                <div class="card-header">
+                  <span>原文输入</span>
+                  <div class="header-actions">
+                    <el-button @click="clearPlainText">清空</el-button>
+                    <el-button
+                      type="primary"
+                      @click="encryptText"
+                      :loading="isEncrypting"
+                    >
+                      🔒 加密
+                    </el-button>
+                  </div>
+                </div>
+              </template>
+              <el-input
+                v-model="plainText"
+                type="textarea"
+                :rows="12"
+                placeholder="请输入要加密的文本..."
+                resize="none"
+                class="text-area"
+              />
+            </el-card>
           </div>
-        </el-card>
+
+          <div class="operation-right">
+            <el-card class="operation-card">
+              <template #header>
+                <div class="card-header">
+                  <span>密文输出</span>
+                  <div class="header-actions">
+                    <el-button @click="clearCipherText">清空</el-button>
+                    <el-button @click="copyResult">复制</el-button>
+                    <el-button
+                      type="success"
+                      @click="decryptText"
+                      :loading="isDecrypting"
+                    >
+                      🔓 解密
+                    </el-button>
+                  </div>
+                </div>
+              </template>
+              <el-input
+                v-model="cipherText"
+                type="textarea"
+                :rows="12"
+                placeholder="加密后的密文将显示在这里..."
+                resize="none"
+                class="text-area"
+              />
+            </el-card>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- 加密解密操作区域 -->
-    <div class="operation-section">
-      <div class="operation-left">
-        <el-card class="operation-card">
-          <template #header>
-            <div class="card-header">
-              <span>原文输入</span>
-              <div class="header-actions">
-                <el-button size="small" @click="clearPlainText">清空</el-button>
-                <el-button
-                  size="small"
-                  type="primary"
-                  @click="encryptText"
-                  :loading="isEncrypting"
-                >
-                  🔒 加密
-                </el-button>
-              </div>
-            </div>
-          </template>
-          <el-input
-            v-model="plainText"
-            type="textarea"
-            :rows="12"
-            placeholder="请输入要加密的文本..."
-            resize="none"
-            class="text-area"
-          />
-        </el-card>
-      </div>
-
-      <div class="operation-right">
-        <el-card class="operation-card">
-          <template #header>
-            <div class="card-header">
-              <span>密文输出</span>
-              <div class="header-actions">
-                <el-button size="small" @click="clearCipherText"
-                  >清空</el-button
-                >
-                <el-button size="small" @click="copyResult">复制</el-button>
-                <el-button
-                  size="small"
-                  type="success"
-                  @click="decryptText"
-                  :loading="isDecrypting"
-                >
-                  🔓 解密
-                </el-button>
-              </div>
-            </div>
-          </template>
-          <el-input
-            v-model="cipherText"
-            type="textarea"
-            :rows="12"
-            placeholder="加密后的密文将显示在这里..."
-            resize="none"
-            class="text-area"
-          />
-        </el-card>
-      </div>
-    </div>
+    <!-- 页脚 -->
+    <CpnFooter />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from "vue";
 import CpnPageHeader from "@/components/CpnPageHeader.vue";
+import CpnNavigation from "@/components/CpnNavigation.vue";
+import CpnFooter from "@/components/CpnFooter.vue";
 import { useToast } from "@/composables/useToast";
+import { Setting, Lock, Refresh } from "@element-plus/icons-vue";
 import CryptoJS from "crypto-js";
 
 // 响应式数据
@@ -148,6 +182,14 @@ const isDecrypting = ref(false); // 解密状态
 const encryptionMode = ref("CBC"); // 加密模式
 const paddingMode = ref("Pkcs7"); // 填充模式
 const outputFormat = ref("Base64"); // 输出格式
+
+// 表单数据对象
+const configForm = ref({
+  secretKey: "",
+  encryptionMode: "CBC",
+  paddingMode: "Pkcs7",
+  outputFormat: "Base64",
+});
 
 // Toast 实例
 const toast = useToast();
@@ -280,25 +322,33 @@ const clearCipherText = () => {
 
 <style lang="scss" scoped>
 .aes-crypto-container {
-  padding-top: 20px;
+  padding-top: 60px; // 为导航栏留出空间
+  padding-bottom: 80px; // 为页脚留出空间
+}
+.main-content {
+  padding: 40px 0;
 }
 
+.container {
+  width: 1200px;
+  margin: 0 auto;
+}
 .crypto-content {
-  width: 1000px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 20px;
 }
 
-.key-section {
-  .key-card {
+.config-section {
+  margin-bottom: 20px;
+  .config-card {
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 
     .card-header {
       display: flex;
       align-items: center;
+      gap: 8px;
       font-weight: 600;
       color: #2c3e50;
     }
@@ -307,10 +357,14 @@ const clearCipherText = () => {
       display: flex;
       gap: 12px;
       align-items: center;
-
+      flex-grow: 1;
       .key-input {
         flex: 1;
       }
+    }
+
+    .full-width {
+      width: 100%;
     }
   }
 }
@@ -333,7 +387,6 @@ const clearCipherText = () => {
 
       .header-actions {
         display: flex;
-        gap: 8px;
       }
     }
 
@@ -348,39 +401,6 @@ const clearCipherText = () => {
         &:focus {
           border-color: #667eea;
           box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
-        }
-      }
-    }
-  }
-}
-
-.advanced-section {
-  margin-bottom: 20px;
-  .advanced-card {
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-
-    .card-header {
-      display: flex;
-      align-items: center;
-      font-weight: 600;
-      color: #2c3e50;
-    }
-
-    .advanced-options {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-
-      .option-group {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-
-        label {
-          font-weight: 500;
-          color: #555;
-          font-size: 14px;
         }
       }
     }
@@ -402,8 +422,12 @@ const clearCipherText = () => {
     align-items: stretch !important;
   }
 
-  .advanced-options {
-    grid-template-columns: 1fr !important;
+  .config-section {
+    .el-row {
+      .el-col {
+        margin-bottom: 10px;
+      }
+    }
   }
 }
 </style>

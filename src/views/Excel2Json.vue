@@ -100,12 +100,12 @@ import { ref, reactive, onMounted } from "vue";
 import CpnPageHeader from "../components/CpnPageHeader.vue";
 import CpnNavigation from "../components/CpnNavigation.vue";
 import CpnFooter from "../components/CpnFooter.vue";
-import { 
-  processExcelFile, 
-  downloadJsonFile, 
-  isExcelFile, 
+import {
+  processExcelFile,
+  downloadJsonFile,
+  isExcelFile,
   formatJsonString,
-  type ExcelConvertOptions 
+  type ExcelConvertOptions,
 } from "../utils/excel/utils";
 
 // 响应式数据
@@ -171,13 +171,15 @@ const processFile = async (file: File) => {
     jsonResult.value = formatJsonString(result);
   } catch (error) {
     console.error("文件处理错误:", error);
-    alert(error instanceof Error ? error.message : "文件处理失败，请检查文件格式是否正确");
+    alert(
+      error instanceof Error
+        ? error.message
+        : "文件处理失败，请检查文件格式是否正确"
+    );
   } finally {
     loading.value = false;
   }
 };
-
-
 
 // 下载JSON文件
 const downloadJson = () => {
@@ -186,7 +188,7 @@ const downloadJson = () => {
   try {
     const jsonData = JSON.parse(jsonResult.value);
     downloadJsonFile(jsonData);
-    
+
     // 显示下载成功提示
     showDownloadSuccess.value = true;
     setTimeout(() => {
@@ -215,7 +217,6 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .excel2json-page {
-  min-height: 100vh;
   padding-top: 60px; // 为导航栏留出空间
   padding-bottom: 80px; // 为页脚留出空间
 }

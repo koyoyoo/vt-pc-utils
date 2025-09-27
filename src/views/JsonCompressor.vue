@@ -373,7 +373,6 @@ onUnmounted(() => {
 
 <style lang="scss" scoped>
 .json-compressor-page {
-  min-height: 100vh;
   padding-top: 60px; // 为导航栏留出空间
   padding-bottom: 80px; // 为页脚留出空间
 }

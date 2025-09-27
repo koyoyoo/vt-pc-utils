@@ -1,7 +1,6 @@
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import path from "path";
-import checker from "vite-plugin-checker";
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -18,21 +17,7 @@ export default defineConfig({
         },
       },
     }),
-    // 添加 TypeScript 检查插件
-    checker({
-      typescript: {
-        tsconfigPath: "tsconfig.app.json",
-      },
-      vueTsc: {
-        tsconfigPath: "tsconfig.app.json",
-      },
-      overlay: {
-        initialIsOpen: false,
-        position: "tl",
-      },
-      terminal: true,
-      enableBuild: false,
-    }),
+    // 移除 checker 插件，将类型检查完全交给 IDE 处理
   ],
   resolve: {
     alias: {
@@ -40,7 +25,7 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
-    include: ['crypto-js']
+    include: ["crypto-js"],
   },
   esbuild: {
     // 在开发模式下禁用 ESBuild 的 TypeScript 处理，让 vue-tsc 处理
@@ -48,9 +33,12 @@ export default defineConfig({
   },
   // 添加开发服务器配置
   server: {
-    // 启用 TypeScript 类型检查
+    host: true, // 允许外部访问
+    port: 5173, // 指定端口
+    open: false, // 不自动打开浏览器
+    // 热更新配置
     hmr: {
-      overlay: true,
+      overlay: true, // 显示错误覆盖层
     },
   },
 });
