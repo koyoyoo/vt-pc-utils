@@ -1,7 +1,7 @@
 <template>
   <footer class="common-footer">
     <div class="footer-content">
-      <p>作者：小白 | QQ：303135056</p>
+      <p>作者：小白&emsp;|&emsp;QQ：303135056</p>
     </div>
   </footer>
 </template>
