@@ -15,38 +15,46 @@
 
 <script setup lang="ts">
 // 定义按钮类型
-type ButtonType = 'compress' | 'format' | 'validate' | 'clear' | 'load' | 'download' | 'primary' | 'default'
+type ButtonType =
+  | "compress"
+  | "format"
+  | "validate"
+  | "clear"
+  | "load"
+  | "download"
+  | "primary"
+  | "default";
 
 // 定义组件属性
 interface Props {
-  type?: ButtonType // 按钮类型
-  text: string // 按钮文本
-  icon?: string // 按钮图标
-  disabled?: boolean // 是否禁用
-  loading?: boolean // 是否加载中
+  type?: ButtonType; // 按钮类型
+  text: string; // 按钮文本
+  icon?: string; // 按钮图标
+  disabled?: boolean; // 是否禁用
+  loading?: boolean; // 是否加载中
 }
 
 // 定义事件
 interface Emits {
-  click: [event: MouseEvent] // 点击事件
+  click: [event: MouseEvent]; // 点击事件
 }
 
 // 接收属性
 const props = withDefaults(defineProps<Props>(), {
-  type: 'default',
+  type: "default",
   disabled: false,
-  loading: false
-})
+  loading: false,
+});
 
 // 定义事件
-const emit = defineEmits<Emits>()
+const emit = defineEmits<Emits>();
 
 // 处理点击事件
 const handleClick = (event: MouseEvent) => {
   if (!props.disabled && !props.loading) {
-    emit('click', event)
+    emit("click", event);
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>
@@ -127,7 +135,7 @@ const handleClick = (event: MouseEvent) => {
 
   // 下载按钮样式
   &.btn-download {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #e9a0f3 0%, #c013b2 100%);
     color: white;
 
     &:hover:not(:disabled) {
@@ -138,7 +146,7 @@ const handleClick = (event: MouseEvent) => {
 
   // 主要按钮样式
   &.btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #667eea 0%, #3566cf 100%);
     color: white;
 
     &:hover:not(:disabled) {

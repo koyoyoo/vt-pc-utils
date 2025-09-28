@@ -17,12 +17,21 @@
         <div class="result-header">
           <h3>转换结果</h3>
           <div class="result-actions">
-            <button @click="downloadJson" class="btn btn-download">
-              📥 下载JSON文件
-            </button>
-            <button @click="resetTool" class="btn btn-reset">
-              🔄 重新转换
-            </button>
+            <CpnButton
+              type="primary"
+              text="📋 复制JSON"
+              @click="copyJsonResult"
+            />
+            <CpnButton
+              type="download"
+              text="📥 下载JSON文件"
+              @click="downloadJson"
+            />
+            <CpnButton
+              type="clear"
+              text="🔄 重新转换"
+              @click="resetTool"
+            />
           </div>
         </div>
         <div class="json-preview">
@@ -44,7 +53,10 @@
             <span class="upload-icon">📁</span>
             <h3>选择或拖拽Excel文件</h3>
             <p>支持 .xls 和 .xlsx 格式</p>
-            <button class="btn btn-primary">选择文件</button>
+            <CpnButton
+              type="primary"
+              text="选择文件"
+            />
           </div>
           <input
             ref="fileInput"
@@ -77,11 +89,6 @@
           </div>
         </div>
       </div>
-
-      <!-- 下载成功提示 -->
-      <div v-if="showDownloadSuccess" class="success-message">
-        ✅ JSON文件下载成功！
-      </div>
     </div>
   </CpnVBody>
 </template>
@@ -90,6 +97,8 @@
 import { ref, reactive, onMounted } from "vue";
 import CpnPageHeader from "@/components/layout/CpnPageHeader.vue";
 import CpnVBody from "@/components/layout/CpnVBody.vue";
+import CpnButton from "@/components/button/CpnButton.vue";
+import { copyToClipboard } from "@/utils/clipboard";
 import {
   processExcelFile,
   downloadJsonFile,
@@ -97,14 +106,13 @@ import {
   formatJsonString,
   type ExcelConvertOptions,
 } from "../utils/excel/utils";
+import { ElMessage } from "element-plus";
 
 // 响应式数据
 const loading = ref(false);
 const jsonResult = ref("");
 const isDragOver = ref(false);
-const showDownloadSuccess = ref(false);
 const fileInput = ref<HTMLInputElement>();
-
 // 转换选项
 const options = reactive<ExcelConvertOptions>({
   removeLineBreaks: true,
@@ -137,7 +145,7 @@ const handleDrop = (event: DragEvent) => {
     if (file && isExcelFile(file)) {
       processFile(file);
     } else {
-      alert("请选择Excel文件（.xls或.xlsx格式）");
+      ElMessage.error("请选择Excel文件（.xls或.xlsx格式）");
     }
   }
 };
@@ -161,13 +169,31 @@ const processFile = async (file: File) => {
     jsonResult.value = formatJsonString(result);
   } catch (error) {
     console.error("文件处理错误:", error);
-    alert(
+    ElMessage.error(
       error instanceof Error
         ? error.message
         : "文件处理失败，请检查文件格式是否正确"
     );
   } finally {
     loading.value = false;
+  }
+};
+
+// 复制JSON结果到剪贴板
+const copyJsonResult = async () => {
+  if (!jsonResult.value) return;
+
+  try {
+    const result = await copyToClipboard(jsonResult.value);
+    if (result.success) {
+      // 显示复制成功提示
+      ElMessage.success("JSON内容已复制到剪贴板！");
+    } else {
+      ElMessage.error(result.error || "复制失败，请重试");
+    }
+  } catch (error) {
+    console.error("复制失败:", error);
+    ElMessage.error("复制失败，请重试");
   }
 };
 
@@ -178,15 +204,11 @@ const downloadJson = () => {
   try {
     const jsonData = JSON.parse(jsonResult.value);
     downloadJsonFile(jsonData);
-
     // 显示下载成功提示
-    showDownloadSuccess.value = true;
-    setTimeout(() => {
-      showDownloadSuccess.value = false;
-    }, 3000);
+    ElMessage.success("JSON文件下载成功！");
   } catch (error) {
     console.error("下载失败:", error);
-    alert("下载失败，请重试");
+    ElMessage.error("下载失败，请重试");
   }
 };
 
@@ -409,6 +431,16 @@ onMounted(() => {
     }
   }
 
+  &.btn-copy {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+    }
+  }
+
   &.btn-download {
     background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
     color: white;
@@ -428,17 +460,6 @@ onMounted(() => {
       box-shadow: 0 8px 20px rgba(255, 107, 107, 0.3);
     }
   }
-}
-
-.success-message {
-  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-  color: white;
-  padding: 15px 20px;
-  border-radius: 8px;
-  text-align: center;
-  font-weight: 500;
-  margin-top: 20px;
-  animation: slideIn 0.3s ease;
 }
 
 @keyframes slideIn {

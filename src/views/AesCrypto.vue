@@ -155,7 +155,7 @@
 import { ref } from "vue";
 import CpnPageHeader from "@/components/layout/CpnPageHeader.vue";
 import CpnVBody from "@/components/layout/CpnVBody.vue";
-import { useToast } from "@/composables/useToast";
+import { ElMessage } from "element-plus";
 import { Setting } from "@element-plus/icons-vue";
 import { copyToClipboard } from "@/utils/clipboard";
 import {
@@ -188,14 +188,13 @@ const configForm = ref({
   outputFormat: "Base64",
 });
 
-// Toast 实例
-const toast = useToast();
+// Toast 实例已移除，使用 ElMessage 替代
 
 // 生成随机密钥
 const generateKey = () => {
   const randomKey = generateRandomKey(16);
   secretKey.value = randomKey;
-  toast.success("随机密钥已生成");
+  ElMessage.success("随机密钥已生成");
 };
 
 // 加密文本
@@ -215,12 +214,12 @@ const encryptText = async () => {
 
     if (result.success) {
       cipherText.value = result.data!;
-      toast.success("加密成功");
+      ElMessage.success("加密成功");
     } else {
-      toast.error(result.error!);
+      ElMessage.error(result.error!);
     }
   } catch (error) {
-    toast.error("加密失败：" + (error as Error).message);
+    ElMessage.error("加密失败：" + (error as Error).message);
   } finally {
     isEncrypting.value = false;
   }
@@ -243,12 +242,12 @@ const decryptText = async () => {
 
     if (result.success) {
       plainText.value = result.data!;
-      toast.success("解密成功");
+      ElMessage.success("解密成功");
     } else {
-      toast.error(result.error!);
+      ElMessage.error(result.error!);
     }
   } catch (error) {
-    toast.error("解密失败：" + (error as Error).message);
+    ElMessage.error("解密失败：" + (error as Error).message);
   } finally {
     isDecrypting.value = false;
   }
@@ -259,9 +258,9 @@ const copyResult = async () => {
   const result = await copyToClipboard(cipherText.value);
   
   if (result.success) {
-    toast.success("已复制到剪贴板");
+    ElMessage.success("已复制到剪贴板");
   } else {
-    toast.error(result.error || "复制失败");
+    ElMessage.error(result.error || "复制失败");
   }
 };
 

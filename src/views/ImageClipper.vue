@@ -60,23 +60,23 @@
 
         <!-- 操作按钮 -->
         <div class="result-actions">
-          <button
-            class="btn btn-primary"
+          <CpnButton
+            type="primary"
+            text="🔄 重新裁剪"
+            :loading="isProcessing"
             @click="processImage"
-            :disabled="isProcessing"
-          >
-            {{ isProcessing ? "处理中..." : "🔄 重新裁剪" }}
-          </button>
-          <button
-            class="btn btn-download"
-            @click="downloadImage"
+          />
+          <CpnButton
+            type="download"
+            text="📥 下载圆形图片"
             :disabled="!clippedImage"
-          >
-            📥 下载圆形图片
-          </button>
-          <button class="btn btn-reset" @click="resetAll">
-            🔄 重新选择图片
-          </button>
+            @click="downloadImage"
+          />
+          <CpnButton
+            type="clear"
+            text="🔄 重新选择图片"
+            @click="resetAll"
+          />
         </div>
       </div>
 
@@ -101,7 +101,10 @@
             <span class="upload-icon">🖼️</span>
             <h3>选择或拖拽图片文件</h3>
             <p>支持 JPG、PNG、GIF 等格式，文件大小不超过10MB</p>
-            <button class="btn btn-primary">选择图片</button>
+            <CpnButton
+              type="primary"
+              text="选择图片"
+            />
           </div>
         </div>
       </div>
@@ -113,7 +116,9 @@
 import { ref, onMounted } from "vue";
 import CpnPageHeader from "@/components/layout/CpnPageHeader.vue";
 import CpnVBody from "@/components/layout/CpnVBody.vue";
+import CpnButton from "@/components/button/CpnButton.vue";
 import { clipImageToCircle } from "@/utils/canvas/clipImage";
+import { ElMessage } from "element-plus";
 
 // 响应式数据
 const fileInput = ref<HTMLInputElement | null>(null);
@@ -163,13 +168,13 @@ const handleDragLeave = (): void => {
 const handleFile = (file: File): void => {
   // 验证文件类型
   if (!file.type.startsWith("image/")) {
-    alert("请选择图片文件！");
+    ElMessage.error("请选择图片文件！");
     return;
   }
 
   // 验证文件大小（限制为10MB）
   if (file.size > 10 * 1024 * 1024) {
-    alert("图片文件大小不能超过10MB！");
+    ElMessage.error("图片文件大小不能超过10MB！");
     return;
   }
 
@@ -197,7 +202,7 @@ const processImage = async (): Promise<void> => {
     clippedImage.value = result;
   } catch (error) {
     console.error("图片处理失败:", error);
-    alert("图片处理失败，请重试！");
+    ElMessage.error("图片处理失败，请重试！");
   } finally {
     isProcessing.value = false;
   }
