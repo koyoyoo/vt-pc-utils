@@ -1,105 +1,95 @@
 <template>
-  <div class="excel2json-page">
-    <!-- 导航栏 -->
-    <CpnNavigation />
+  <CpnVBody>
+    <!-- 页面标题 -->
+    <CpnPageHeader
+      title="📊 Excel转JSON工具"
+      subtitle="将Excel文件快速转换为JSON格式数据"
+    />
+    <div class="main-section">
+      <!-- 加载状态 -->
+      <div v-if="loading" class="loading">
+        <div class="spinner"></div>
+        <p>正在处理文件，请稍候...</p>
+      </div>
 
-    <div class="main-content">
-      <div class="container">
-        <!-- 页面标题 -->
-        <CpnPageHeader
-          title="📊 Excel转JSON工具"
-          subtitle="将Excel文件快速转换为JSON格式数据"
-        />
-
-        <!-- 加载状态 -->
-        <div v-if="loading" class="loading">
-          <div class="spinner"></div>
-          <p>正在处理文件，请稍候...</p>
-        </div>
-
-        <!-- 结果展示区 -->
-        <div v-if="jsonResult && !loading" class="result-area">
-          <div class="result-header">
-            <h3>转换结果</h3>
-            <div class="result-actions">
-              <button @click="downloadJson" class="btn btn-download">
-                📥 下载JSON文件
-              </button>
-              <button @click="resetTool" class="btn btn-reset">
-                🔄 重新转换
-              </button>
-            </div>
-          </div>
-          <div class="json-preview">
-            <pre>{{ jsonResult }}</pre>
+      <!-- 结果展示区 -->
+      <div v-if="jsonResult && !loading" class="result-area">
+        <div class="result-header">
+          <h3>转换结果</h3>
+          <div class="result-actions">
+            <button @click="downloadJson" class="btn btn-download">
+              📥 下载JSON文件
+            </button>
+            <button @click="resetTool" class="btn btn-reset">
+              🔄 重新转换
+            </button>
           </div>
         </div>
-
-        <!-- 文件上传区 -->
-        <div v-if="!jsonResult && !loading" class="upload-section">
-          <div
-            class="upload-area"
-            :class="{ 'drag-over': isDragOver }"
-            @drop="handleDrop"
-            @dragover="handleDragOver"
-            @dragleave="handleDragLeave"
-            @click="triggerFileInput"
-          >
-            <div class="upload-content">
-              <span class="upload-icon">📁</span>
-              <h3>选择或拖拽Excel文件</h3>
-              <p>支持 .xls 和 .xlsx 格式</p>
-              <button class="btn btn-primary">选择文件</button>
-            </div>
-            <input
-              ref="fileInput"
-              type="file"
-              accept=".xls,.xlsx"
-              @change="handleFileSelect"
-              style="display: none"
-            />
-          </div>
-
-          <!-- 转换选项 -->
-          <div class="options">
-            <h4>转换选项</h4>
-            <div class="option-group">
-              <label class="checkbox-label">
-                <input v-model="options.removeLineBreaks" type="checkbox" />
-                <span class="checkmark"></span>
-                去除换行符
-              </label>
-              <label class="checkbox-label">
-                <input v-model="options.convertDates" type="checkbox" />
-                <span class="checkmark"></span>
-                转换日期格式
-              </label>
-              <label class="checkbox-label">
-                <input v-model="options.mergeSheets" type="checkbox" />
-                <span class="checkmark"></span>
-                合并多个工作表
-              </label>
-            </div>
-          </div>
-        </div>
-
-        <!-- 下载成功提示 -->
-        <div v-if="showDownloadSuccess" class="success-message">
-          ✅ JSON文件下载成功！
+        <div class="json-preview">
+          <pre>{{ jsonResult }}</pre>
         </div>
       </div>
-    </div>
 
-    <!-- 页脚 -->
-    <CpnFooter />
-  </div>
+      <!-- 文件上传区 -->
+      <div v-if="!jsonResult && !loading" class="upload-section">
+        <div
+          class="upload-area"
+          :class="{ 'drag-over': isDragOver }"
+          @drop="handleDrop"
+          @dragover="handleDragOver"
+          @dragleave="handleDragLeave"
+          @click="triggerFileInput"
+        >
+          <div class="upload-content">
+            <span class="upload-icon">📁</span>
+            <h3>选择或拖拽Excel文件</h3>
+            <p>支持 .xls 和 .xlsx 格式</p>
+            <button class="btn btn-primary">选择文件</button>
+          </div>
+          <input
+            ref="fileInput"
+            type="file"
+            accept=".xls,.xlsx"
+            @change="handleFileSelect"
+            style="display: none"
+          />
+        </div>
+
+        <!-- 转换选项 -->
+        <div class="options">
+          <h4>转换选项</h4>
+          <div class="option-group">
+            <label class="checkbox-label">
+              <input v-model="options.removeLineBreaks" type="checkbox" />
+              <span class="checkmark"></span>
+              去除换行符
+            </label>
+            <label class="checkbox-label">
+              <input v-model="options.convertDates" type="checkbox" />
+              <span class="checkmark"></span>
+              转换日期格式
+            </label>
+            <label class="checkbox-label">
+              <input v-model="options.mergeSheets" type="checkbox" />
+              <span class="checkmark"></span>
+              合并多个工作表
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- 下载成功提示 -->
+      <div v-if="showDownloadSuccess" class="success-message">
+        ✅ JSON文件下载成功！
+      </div>
+    </div>
+  </CpnVBody>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, onMounted } from "vue";
-import CpnPageHeader from "../components/CpnPageHeader.vue";
-import CpnNavigation from "../components/CpnNavigation.vue";
-import CpnFooter from "../components/CpnFooter.vue";
+import CpnPageHeader from "@/components/layout/CpnPageHeader.vue";
+import CpnVBody from "@/components/layout/CpnVBody.vue";
 import {
   processExcelFile,
   downloadJsonFile,
@@ -216,20 +206,6 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
-.excel2json-page {
-  padding-top: 60px; // 为导航栏留出空间
-  padding-bottom: 80px; // 为页脚留出空间
-}
-
-.main-content {
-  padding: 40px 20px;
-}
-
-.container {
-  max-width: 1000px;
-  margin: 0 auto;
-}
-
 .loading {
   text-align: center;
   padding: 60px 20px;
@@ -477,14 +453,6 @@ onMounted(() => {
 }
 
 @media (max-width: 768px) {
-  .main-content {
-    padding: 20px 15px;
-  }
-
-  .title {
-    font-size: 2rem;
-  }
-
   .upload-area {
     padding: 40px 20px;
   }

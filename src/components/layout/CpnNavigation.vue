@@ -34,7 +34,7 @@ const tools = ref([
     description: "Excel文件转换为JSON格式",
   },
   {
-    name: "JSON压缩",
+    name: "JSON/JS压缩",
     path: "/json-compressor",
     icon: "🗜️",
     description: "JSON数据压缩和格式化",
@@ -59,10 +59,6 @@ const tools = ref([
   background: rgba(0, 0, 0, 0.9);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
   z-index: 1000;
   height: 60px;
 }
@@ -70,7 +66,6 @@ const tools = ref([
 .nav-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 20px;
   height: 100%;
   display: flex;
   align-items: center;
@@ -95,7 +90,6 @@ const tools = ref([
 
   &.router-link-active {
     background: rgba(102, 126, 234, 0.3);
-    color: #667eea;
   }
 }
 

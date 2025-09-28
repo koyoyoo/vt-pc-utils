@@ -1,130 +1,118 @@
 <template>
-  <div class="image-clipper-page">
-    <!-- 导航栏 -->
-    <CpnNavigation />
+  <CpnVBody>
+    <!-- 页面标题 -->
+    <CpnPageHeader
+      title="🖼️ 图片圆形裁剪工具"
+      subtitle="上传图片并将其裁剪为圆形，支持下载裁剪后的图片"
+    />
+    <div class="main-section">
+      <!-- 加载状态 -->
+      <div v-if="isProcessing" class="loading">
+        <div class="spinner"></div>
+        <p>正在处理图片，请稍候...</p>
+      </div>
 
-    <div class="main-content">
-      <div class="container">
-        <!-- 页面标题 -->
-        <CpnPageHeader
-          title="🖼️ 图片圆形裁剪工具"
-          subtitle="上传图片并将其裁剪为圆形，支持下载裁剪后的图片"
-        />
-
-        <!-- 加载状态 -->
-        <div v-if="isProcessing" class="loading">
-          <div class="spinner"></div>
-          <p>正在处理图片，请稍候...</p>
-        </div>
-
-        <!-- 结果展示区 -->
-        <div v-if="originalImage && !isProcessing" class="result-area">
-          <div class="image-container">
-            <!-- 原图预览 -->
-            <div class="original-preview">
-              <h3>原图预览</h3>
-              <div class="image-wrapper">
-                <img :src="originalImage" alt="原图" />
-              </div>
-            </div>
-
-            <!-- 裁剪后预览 -->
-            <div class="clipped-preview">
-              <h3>圆形裁剪预览</h3>
-              <div class="image-wrapper">
-                <img
-                  v-if="clippedImage"
-                  :src="clippedImage"
-                  alt="裁剪后的图片"
-                  class="circle-image"
-                />
-                <div v-else class="loading-placeholder">
-                  <div class="loading-spinner"></div>
-                  <p>正在处理图片...</p>
-                </div>
-              </div>
+      <!-- 结果展示区 -->
+      <div v-if="originalImage && !isProcessing" class="result-area">
+        <div class="image-container">
+          <!-- 原图预览 -->
+          <div class="original-preview">
+            <h3>原图预览</h3>
+            <div class="image-wrapper">
+              <img :src="originalImage" alt="原图" />
             </div>
           </div>
 
-          <!-- 质量调节 -->
-          <div class="quality-control">
-            <h4>图片质量设置</h4>
-            <div class="quality-slider">
-              <label for="quality"
-                >质量：{{ Math.round(quality * 100) }}%</label
-              >
-              <input
-                id="quality"
-                type="range"
-                min="0.1"
-                max="1"
-                step="0.1"
-                v-model="quality"
-                @input="processImage"
+          <!-- 裁剪后预览 -->
+          <div class="clipped-preview">
+            <h3>圆形裁剪预览</h3>
+            <div class="image-wrapper">
+              <img
+                v-if="clippedImage"
+                :src="clippedImage"
+                alt="裁剪后的图片"
+                class="circle-image"
               />
+              <div v-else class="loading-placeholder">
+                <div class="loading-spinner"></div>
+                <p>正在处理图片...</p>
+              </div>
             </div>
-          </div>
-
-          <!-- 操作按钮 -->
-          <div class="result-actions">
-            <button
-              class="btn btn-primary"
-              @click="processImage"
-              :disabled="isProcessing"
-            >
-              {{ isProcessing ? "处理中..." : "🔄 重新裁剪" }}
-            </button>
-            <button
-              class="btn btn-download"
-              @click="downloadImage"
-              :disabled="!clippedImage"
-            >
-              📥 下载圆形图片
-            </button>
-            <button class="btn btn-reset" @click="resetAll">
-              🔄 重新选择图片
-            </button>
           </div>
         </div>
 
-        <!-- 文件上传区 -->
-        <div v-if="!originalImage && !isProcessing" class="upload-section">
-          <div
-            class="upload-area"
-            :class="{ 'drag-over': isDragOver }"
-            @drop="handleDrop"
-            @dragover.prevent="handleDragOver"
-            @dragleave="handleDragLeave"
-            @click="triggerFileInput"
-          >
+        <!-- 质量调节 -->
+        <div class="quality-control">
+          <h4>图片质量设置</h4>
+          <div class="quality-slider">
+            <label for="quality">质量：{{ Math.round(quality * 100) }}%</label>
             <input
-              ref="fileInput"
-              type="file"
-              accept="image/*"
-              @change="handleFileSelect"
-              style="display: none"
+              id="quality"
+              type="range"
+              min="0.1"
+              max="1"
+              step="0.1"
+              v-model="quality"
+              @input="processImage"
             />
-            <div class="upload-content">
-              <span class="upload-icon">🖼️</span>
-              <h3>选择或拖拽图片文件</h3>
-              <p>支持 JPG、PNG、GIF 等格式，文件大小不超过10MB</p>
-              <button class="btn btn-primary">选择图片</button>
-            </div>
+          </div>
+        </div>
+
+        <!-- 操作按钮 -->
+        <div class="result-actions">
+          <button
+            class="btn btn-primary"
+            @click="processImage"
+            :disabled="isProcessing"
+          >
+            {{ isProcessing ? "处理中..." : "🔄 重新裁剪" }}
+          </button>
+          <button
+            class="btn btn-download"
+            @click="downloadImage"
+            :disabled="!clippedImage"
+          >
+            📥 下载圆形图片
+          </button>
+          <button class="btn btn-reset" @click="resetAll">
+            🔄 重新选择图片
+          </button>
+        </div>
+      </div>
+
+      <!-- 文件上传区 -->
+      <div v-if="!originalImage && !isProcessing" class="upload-section">
+        <div
+          class="upload-area"
+          :class="{ 'drag-over': isDragOver }"
+          @drop="handleDrop"
+          @dragover.prevent="handleDragOver"
+          @dragleave="handleDragLeave"
+          @click="triggerFileInput"
+        >
+          <input
+            ref="fileInput"
+            type="file"
+            accept="image/*"
+            @change="handleFileSelect"
+            style="display: none"
+          />
+          <div class="upload-content">
+            <span class="upload-icon">🖼️</span>
+            <h3>选择或拖拽图片文件</h3>
+            <p>支持 JPG、PNG、GIF 等格式，文件大小不超过10MB</p>
+            <button class="btn btn-primary">选择图片</button>
           </div>
         </div>
       </div>
     </div>
-
-    <!-- 页脚 -->
-    <CpnFooter />
-  </div>
+  </CpnVBody>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import CpnPageHeader from "../components/CpnPageHeader.vue";
-import CpnNavigation from "../components/CpnNavigation.vue";
-import CpnFooter from "../components/CpnFooter.vue";
+import CpnPageHeader from "@/components/layout/CpnPageHeader.vue";
+import CpnVBody from "@/components/layout/CpnVBody.vue";
 import { clipImageToCircle } from "@/utils/canvas/clipImage";
 
 // 响应式数据

@@ -31,7 +31,7 @@ const routes: RouteRecordRaw[] = [
     name: "JsonCompressor",
     component: JsonCompressor,
     meta: {
-      title: "JSON压缩工具",
+      title: "JSON/JS压缩工具",
     },
   },
   {

@@ -14,14 +14,14 @@ interface Props {
 
 // 接收父组件传递的属性
 withDefaults(defineProps<Props>(), {
-  subtitle: ''
+  subtitle: "",
 });
 </script>
 
 <style lang="scss" scoped>
 .page-header {
   text-align: center;
-  margin-bottom: 40px;
+  padding: 30px;
 }
 
 .title {

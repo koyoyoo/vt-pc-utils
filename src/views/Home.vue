@@ -1,6 +1,6 @@
 <template>
-  <div class="home-page">
-    <div class="container">
+  <CpnVBody>
+    <div class="home-content">
       <h1 class="title">🛠️ koyoyoo在线工具集合</h1>
       <p class="subtitle">简单易用的在线工具，提升您的工作效率</p>
 
@@ -14,10 +14,10 @@
           </p>
         </router-link>
 
-        <!-- JSON压缩工具 -->
+        <!-- JSON/JS压缩工具 -->
         <router-link to="/json-compressor" class="tool-card json">
           <span class="tool-icon">🗜️</span>
-          <h3 class="tool-title">JSON压缩</h3>
+          <h3 class="tool-title">JSON/JS压缩</h3>
           <p class="tool-description">
             高性能JSON格式化、压缩和美化工具，支持大文件处理和格式验证
           </p>
@@ -46,33 +46,21 @@
         <p>选择上方工具开始使用 | 所有处理均在本地完成，保护您的数据安全</p>
       </div>
     </div>
-
-    <!-- 页脚组件 -->
-    <CpnFooter />
-  </div>
+  </CpnVBody>
 </template>
 
 <script setup lang="ts">
-import CpnFooter from "../components/CpnFooter.vue";
+import CpnVBody from "@/components/layout/CpnVBody.vue";
 </script>
 
 <style lang="scss" scoped>
-.home-page {
-  height: calc(100vh - 70px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  box-sizing: border-box;
-}
-
-.container {
+.home-content {
+  text-align: center;
   background: white;
   border-radius: 20px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-  padding: 40px;
-  width: 100%;
-  text-align: center;
+  padding: 30px;
+  margin: 30px;
 }
 
 .title {
@@ -164,8 +152,8 @@ import CpnFooter from "../components/CpnFooter.vue";
     font-size: 2rem;
   }
 
-  .container {
-    padding: 30px 20px;
+  .home-content {
+    padding: 20px;
   }
 }
 </style>

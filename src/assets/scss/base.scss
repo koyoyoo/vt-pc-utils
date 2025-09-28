@@ -1,0 +1,145 @@
+@charset "utf-8";
+
+/*common css S*/
+.iconfont {
+  font-size: inherit;
+}
+html {
+  text-size-adjust: 100%;
+  font-family: "microsoft yahei";
+}
+body,
+div,
+dl,
+dt,
+dd,
+ul,
+ol,
+li,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+pre,
+code,
+em,
+form,
+fieldset,
+legend,
+input,
+textarea,
+p,
+blockquote,
+th,
+td,
+hr,
+button,
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+  margin: 0;
+  padding: 0;
+}
+body a {
+  outline: none;
+  text-decoration: none;
+} /*A点击时 没有虚线*/
+a:hover,
+a:focus {
+  outline: none;
+  text-decoration: none;
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+input,
+select,
+button,
+textarea {
+  font-size: 100%;
+  font-weight: normal;
+}
+textarea {
+  outline: none;
+  resize: none;
+}
+i,
+em {
+  font-style: normal;
+}
+img {
+  border: 0;
+}
+ol,
+ul,
+li {
+  list-style: none;
+}
+.clearfix:after {
+  visibility: hidden;
+  display: block;
+  font-size: 0;
+  content: ".";
+  clear: both;
+  height: 0;
+}
+*html .clearfix,
+* + html .clearfix {
+  zoom: 1;
+}
+/*common css E*/
+.area {
+  position: relative;
+}
+
+::-webkit-input-placeholder {
+  color: #bbb;
+}
+:-moz-placeholder {
+  color: #bbb;
+}
+::-moz-placeholder {
+  color: #bbb;
+}
+:-ms-input-placeholder {
+  color: #bbb;
+}
+
+/*定义滚动条宽*/
+::-webkit-scrollbar {
+  height: 0.5em;
+  width: 0.5em;
+  background-color: rgba(199, 199, 199, 0.1);
+}
+/*定义滚动条轨道*/
+::-webkit-scrollbar-track {
+  -webkit-border-radius: 0.4em;
+  -moz-border-radius: 0.4em;
+  border-radius: 0.4em;
+  background-color: rgba(199, 199, 199, 0.1);
+}
+/*定义滑块*/
+::-webkit-scrollbar-thumb {
+  -webkit-border-radius: 0.8em;
+  -moz-border-radius: 0.8em;
+  border-radius: 0.8em;
+  background-color: rgba(199, 199, 199, 0.6);
+}

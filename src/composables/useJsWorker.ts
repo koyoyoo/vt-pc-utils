@@ -1,19 +1,19 @@
 import { ref, onUnmounted, readonly } from "vue";
 import {
-  createJsonWorker,
-  processJsonSmart,
-  calculateJsonStats,
-  cleanupWorker,
-  type JsonOperation,
-  type JsonProcessResult,
-  type JsonStats,
-} from "@/utils/jsCompressor/jsonWorker";
+  createJsWorker,
+  processJsSmart,
+  calculateJsStats,
+  cleanupJsWorker,
+  type JsOperation,
+  type JsProcessResult,
+  type JsStats,
+} from "@/utils/jsCompressor/jsWorker";
 
 /**
- * JSON Worker Hooks
- * 封装 Web Worker 相关逻辑，提供 JSON 处理功能
+ * JavaScript Worker Hooks
+ * 封装 JavaScript Web Worker 相关逻辑，提供 JavaScript 代码处理功能
  */
-export function useJsonWorker() {
+export function useJsWorker() {
   // Worker 实例
   const worker = ref<Worker | null>(null);
 
@@ -29,29 +29,29 @@ export function useJsonWorker() {
   const initWorker = (): void => {
     if (!worker.value) {
       try {
-        worker.value = createJsonWorker();
+        worker.value = createJsWorker();
         isReady.value = true;
       } catch (error) {
-        console.error("Worker 初始化失败:", error);
+        console.error("JavaScript Worker 初始化失败:", error);
         isReady.value = false;
       }
     }
   };
 
   /**
-   * 处理 JSON 数据
-   * @param inputJson 输入的 JSON 字符串
+   * 处理 JavaScript 代码
+   * @param inputJs 输入的 JavaScript 代码字符串
    * @param operation 操作类型
    * @returns 处理结果
    */
-  const processJson = async (
-    inputJson: string,
-    operation: JsonOperation
-  ): Promise<JsonProcessResult> => {
-    if (!inputJson.trim()) {
+  const processJs = async (
+    inputJs: string,
+    operation: JsOperation
+  ): Promise<JsProcessResult> => {
+    if (!inputJs.trim()) {
       return {
         success: false,
-        error: "请输入JSON数据",
+        error: "请输入JavaScript代码",
         processingTime: 0,
       };
     }
@@ -64,8 +64,8 @@ export function useJsonWorker() {
       initWorker();
 
       // 使用智能处理函数
-      const result = await processJsonSmart(
-        inputJson,
+      const result = await processJsSmart(
+        inputJs,
         operation,
         worker.value || undefined
       );
@@ -83,18 +83,18 @@ export function useJsonWorker() {
   };
 
   /**
-   * 计算 JSON 统计信息
-   * @param originalJson 原始 JSON 字符串
-   * @param processedJson 处理后的 JSON 字符串
+   * 计算 JavaScript 代码统计信息
+   * @param originalJs 原始 JavaScript 代码字符串
+   * @param processedJs 处理后的 JavaScript 代码字符串
    * @param processingTime 处理时间
    * @returns 统计信息
    */
-  const getJsonStats = (
-    originalJson: string,
-    processedJson: string,
+  const getJsStats = (
+    originalJs: string,
+    processedJs: string,
     processingTime: number
-  ): JsonStats => {
-    return calculateJsonStats(originalJson, processedJson, processingTime);
+  ): JsStats => {
+    return calculateJsStats(originalJs, processedJs, processingTime);
   };
 
   /**
@@ -102,7 +102,7 @@ export function useJsonWorker() {
    */
   const cleanup = (): void => {
     if (worker.value) {
-      cleanupWorker(worker.value);
+      cleanupJsWorker(worker.value);
       worker.value = null;
       isReady.value = false;
     }
@@ -129,12 +129,12 @@ export function useJsonWorker() {
 
     // 方法
     initWorker,
-    processJson,
-    getJsonStats,
+    processJs,
+    getJsStats,
     cleanup,
     resetWorker,
   };
 }
 
 // 导出类型
-export type { JsonOperation, JsonProcessResult, JsonStats };
+export type { JsOperation, JsProcessResult, JsStats };
