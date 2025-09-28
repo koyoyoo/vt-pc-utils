@@ -50,7 +50,7 @@ export const processExcelFile = async (
  * 将工作表转换为column格式
  * @param worksheet - Excel工作表
  * @param options - 转换选项
- * @returns any[] - 转换后的数据数组
+ * @returns any[] - 转换后的数据数组1
  */
 export const convertSheetToColumnFormat = (
   worksheet: any,
@@ -64,50 +64,80 @@ export const convertSheetToColumnFormat = (
 
   if (jsonResult.length === 0) return [];
 
-  const columns = jsonResult[0] as any[]; // 第一行作为列名
+  // 过滤掉只有一条数据的行，找到第一个有效数据行
+  let validDataStartIndex = 0;
+  let columns: any[] = [];
+
+  for (let i = 0; i < jsonResult.length; i++) {
+    const row = jsonResult[i] as any[];
+    // 计算非空且非undefined的有效数据列数
+    const validColumns = row.filter(
+      (cell) =>
+        cell !== undefined &&
+        cell !== null &&
+        cell !== "" &&
+        String(cell).trim() !== ""
+    ).length;
+
+    // 如果有效列数大于1，则认为是有效数据行
+    if (validColumns > 1) {
+      validDataStartIndex = i;
+      columns = row; // 使用第一个有效行作为列名
+      break;
+    }
+  }
+
+  // 如果没有找到有效数据行，返回空数组
+  if (validDataStartIndex === jsonResult.length - 1) return [];
+
   let jsonData: any[] = [];
   let prevObj: any = {};
 
-  // 从第二行开始处理数据
-  jsonResult.slice(1).forEach((row: unknown, index: number) => {
-    const rowData = row as any[]; // 类型断言
-    const obj: any = { "column-0": index + 1 }; // 添加序号列
+  // 从有效数据行的下一行开始处理数据
+  jsonResult
+    .slice(validDataStartIndex + 1)
+    .forEach((row: unknown, index: number) => {
+      const rowData = row as any[]; // 类型断言
+      const obj: any = { "column-0": index + 1 }; // 添加序号列
 
-    columns.forEach((_col: any, i: number) => {
-      let cellValue = rowData[i];
+      columns.forEach((_col: any, i: number) => {
+        let cellValue = rowData[i];
 
-      // 去除换行符处理
-      if (options.removeLineBreaks && typeof cellValue === "string") {
-        cellValue = cellValue.replace(/[\n\r]/g, "");
-      }
+        // 去除换行符处理
+        if (options.removeLineBreaks && typeof cellValue === "string") {
+          cellValue = cellValue.replace(/[\n\r]/g, "");
+        }
 
-      // 日期格式转换处理
-      if (options.convertDates && /^\d{1,2}\/\d{1,2}\/\d{2}$/.test(cellValue)) {
-        const dateParts = cellValue.split("/");
-        const year = parseInt(dateParts[2]);
-        const fullYear = year < 50 ? 2000 + year : 1900 + year;
-        obj[
-          "column-" + (i + 1)
-        ] = `${fullYear}年${dateParts[0]}月${dateParts[1]}日`;
+        // 日期格式转换处理
+        if (
+          options.convertDates &&
+          /^\d{1,2}\/\d{1,2}\/\d{2}$/.test(cellValue)
+        ) {
+          const dateParts = cellValue.split("/");
+          const year = parseInt(dateParts[2]);
+          const fullYear = year < 50 ? 2000 + year : 1900 + year;
+          obj[
+            "column-" + (i + 1)
+          ] = `${fullYear}年${dateParts[0]}月${dateParts[1]}日`;
+        } else {
+          obj["column-" + (i + 1)] = cellValue;
+        }
+      });
+
+      // 处理合并逻辑（与HTML版本保持一致）
+      if (obj["column-1"] === undefined) {
+        // 如果column-1是undefined，将column-3与前一条记录合并
+        if (obj["column-3"] !== undefined && obj["column-3"] !== "undefined") {
+          prevObj["column-3"] =
+            (prevObj["column-3"] ? prevObj["column-3"] + ", " : "") +
+            obj["column-3"];
+        }
       } else {
-        obj["column-" + (i + 1)] = cellValue;
+        // 如果column-1不是undefined，添加到结果中
+        jsonData.push(prevObj);
+        prevObj = obj;
       }
     });
-
-    // 处理合并逻辑（与HTML版本保持一致）
-    if (obj["column-1"] === undefined) {
-      // 如果column-1是undefined，将column-3与前一条记录合并
-      if (obj["column-3"] !== undefined && obj["column-3"] !== "undefined") {
-        prevObj["column-3"] =
-          (prevObj["column-3"] ? prevObj["column-3"] + ", " : "") +
-          obj["column-3"];
-      }
-    } else {
-      // 如果column-1不是undefined，添加到结果中
-      jsonData.push(prevObj);
-      prevObj = obj;
-    }
-  });
 
   // 添加最后一个对象
   jsonData.push(prevObj);
